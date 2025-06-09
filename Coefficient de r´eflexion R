@@ -1,0 +1,51 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+e = 1.602e-19
+m_e = 9.109e-31
+epsilon_0 = 8.854e-12
+
+n0 = 1e18
+
+omega_p = np.sqrt(n0 * e**2 / (epsilon_0 * m_e))
+
+omega = np.linspace(0.1 * omega_p, 3 * omega_p, 1000)
+
+epsilon_r = 1 - (omega_p**2) / (omega**2)
+n = np.sqrt(epsilon_r + 0j)
+
+R = np.abs((1 - n) / (1 + n))**2
+
+omega_MHz = omega / (2 * np.pi * 1e6)
+omega_p_MHz = omega_p / (2 * np.pi * 1e6)
+
+plt.figure(figsize=(10, 6))
+plt.plot(omega_MHz, R, 'b-', linewidth=2, label=r'$R(\omega)$')
+plt.axvline(x=omega_p_MHz, color='r', linestyle='--', linewidth=2, 
+            label=r'$\omega_p$ = {:.1f} MHz'.format(omega_p_MHz))
+
+plt.axvspan(0, omega_p_MHz, alpha=0.2, color='red', label='Réflexion totale')
+
+plt.xlabel('Fréquence $\omega$ (MHz)', fontsize=12)
+plt.ylabel('Coefficient de réflexion $R$', fontsize=12)
+plt.title('Variation du coefficient de réflexion $R(\omega)$ en fonction de la fréquence\n' + 
+          r'Densité électronique $n_0$ = {:.0e} m$^{{-3}}$'.format(n0), fontsize=14)
+plt.legend(fontsize=11)
+plt.grid(True, alpha=0.3)
+plt.xlim(0, omega_MHz[-1])
+plt.ylim(0, 1.1)
+
+plt.annotate('Réflexion totale\n($\omega < \omega_p$)', 
+             xy=(omega_p_MHz*0.5, 0.8), fontsize=10, ha='center',
+             bbox=dict(boxstyle="round,pad=0.3", facecolor="lightcoral", alpha=0.7))
+plt.annotate('Transmission partielle\n($\omega > \omega_p$)', 
+             xy=(omega_p_MHz*1.5, 0.3), fontsize=10, ha='center',
+             bbox=dict(boxstyle="round,pad=0.3", facecolor="lightblue", alpha=0.7))
+
+plt.tight_layout()
+plt.show()
+
+print(f"Pulsation plasma ωp = {omega_p:.2e} rad/s")
+print(f"Fréquence plasma fp = {omega_p_MHz:.1f} MHz")
+print(f"Pour ω < ωp : R ≈ 1 (réflexion totale)")
+print(f"Pour ω > ωp : R < 1 (transmission partielle)")
