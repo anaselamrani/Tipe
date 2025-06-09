@@ -1,0 +1,21 @@
+from math import sqrt
+
+# Paramètres du plasma
+omega_p = 2e9  # pulsation plasma (rad/s)
+R_seuil = 0.1  # seuil critique de réflexion
+
+# Plage de fréquences à tester (rad/s)
+frequences = [1e8 * i for i in range(1, 41)]  # de 10^8 à 4×10^9 rad/s
+
+# Analyse de chaque fréquence
+for omega in frequences:
+    if omega <= omega_p:
+        R = 1.0  # Réflexion totale
+    else:
+        temp = sqrt(1 - (omega_p**2) / (omega**2))
+        R = abs((1 - temp) / (1 + temp))**2
+
+    # Détection : True si forte réflexion (perturbation)
+    perturbation_detectee = R > R_seuil
+
+    print(f"ω = {omega:.2e} rad/s → R = {R:.3f} → Perturbé : {perturbation_detectee}")
